@@ -1,0 +1,237 @@
+									
+
+
+									MsTest							
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Installation :
+
+nstall-Package MSTest.TestFramework
+Install-Package MSTest.TestAdapter
+Install-Package Microsoft.NET.Test.Sdk
+
+
+
+
+
+									Attributes
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+        [ClassInitialize]
+        public static void BeforeClass(TestContext tc)
+        {
+            Console.WriteLine("This is Before Class");
+        }
+
+
+
+
+
+        [ClassCleanup]
+        public static void AfterClass()
+        {
+            Console.WriteLine("This is After Class");
+        }
+
+
+
+
+
+
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            Console.WriteLine("This is After Test");
+        }
+
+
+
+
+
+
+        [TestMethod] // this is used to decl method as test method
+        public void TestMethod1()
+        {
+            Console.WriteLine("This is Test Method one");
+        }
+
+
+
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            Console.WriteLine("This is Before Test");
+        }
+
+
+
+
+        [TestMethod, TestCategory("SmokeTest")] // this is used to decl method as test method
+        public void TestMethod5()
+        {
+            Console.WriteLine("This is Test Method one");
+        }
+
+
+
+        [Ignore]
+        [TestMethod, TestCategory("SmokeTest")]
+        public void TestMethod2()
+        {
+            Console.WriteLine("This is Test Method two");
+        }
+
+
+
+
+        [TestMethod, ExpectedException(typeof(NullReferenceException))]
+        public void TestMethod3()
+        {
+            Console.WriteLine("This is Test Method three");
+            String b = null;
+            Console.WriteLine(b.Length);
+        }		
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TestExecutionWorkflow
+
+
+
+
+
+
+
+
+								Data Driven Test Attributes 		
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[DataRow(0, 0)]
+[DataRow(1, 1)]
+[DataRow(2, 1)]
+[DataRow(80, 23416728348467685)]
+[DataTestMethod]
+public void GivenDataFibonacciReturnsResultsOk(int number, int result)
+{
+var fib = new Fib();
+var actual = fib.Fibonacci(number);
+Assert.AreEqual(result, actual);
+}
+
+
+
+
+								DATA DRIVEN TEST CSV
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+[DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "TestsData.csv",
+"TestsData#csv", DataAccessMethod.Sequential)]
+[TestMethod]
+public void DataDrivenTest()
+{
+int valueA = Convert.ToInt32(this.TestContext.DataRow["valueA"]);
+int valueB = Convert.ToInt32(this.TestContext.DataRow["valueB"]);
+int expected = Convert.ToInt32(this.TestContext.DataRow["expectedResult"]);
+}
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+									Execute Tests in Parallel
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Parallel Test Execution at Method Level and Class Level With MSTEST:
+
+
+Into Assembly.info 
+
+
+Maximum 4 test  will  get  Parallel test Execution 
+
+
+[assembly: Parallelize(Workers = 0, Scope = Microsoft.VisualStudio.TestTools.UnitTesting.ExecutionScope.MethodLevel)]
+
+
+[assembly: Parallelize(Workers = 0, Scope = Microsoft.VisualStudio.TestTools.UnitTesting.ExecutionScope.ClassLevel)]
+
+
+
+
+
+If you have multiple test assemblies you want to parellize you can create a file named .runsettings at the root of the solution:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+<MSTest>
+<Parallelize>
+<Workers>8</Workers>
+<Scope>MethodLevel</Scope>
+</Parallelize>
+</MSTest>
+</RunSettings>
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+									Data Driven Test Dynamic Data
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Assert.AreEqual(28, _actualFuel); // Tests whether the specified values are equal.
+
+Assert.AreNotEqual(28, _actualFuel); // Tests whether the specified values are unequal. Same as AreEqual for numeric values.
+
+Assert.AreSame(_expectedRocket, _actualRocket); // Tests whether the specified objects both refer to the same 
+
+Assert.AreNotSame(_expectedRocket, _actualRocket); // Tests whether the specified objects refer to different objects
+
+Assert.IsTrue(_isThereEnoughFuel); // Tests whether the specified condition is true
+
+Assert.IsFalse(_isThereEnoughFuel); // Tests whether the specified condition is false
+
+Assert.IsNull(_actualRocket); // Tests whether the specified object is null
+
+Assert.IsNotNull(_actualRocket); // Tests whether the specified object is non-null
+
+Assert.IsInstanceOfType(_actualRocket, typeof(Falcon9Rocket)); // Tests whether the specified object is an instance of the expected type
+
+Assert.IsNotInstanceOfType(_actualRocket, typeof(Falcon9Rocket)); // Tests whether the specified object is not an instance of type
+
+StringAssert.Contains(_expectedBellatrixTitle, "Bellatrix"); // Tests whether the specified string contains the specified substring
+
+StringAssert.StartsWith(_expectedBellatrixTitle, "Bellatrix"); // Tests whether the specified string begins with the specified substring
+
+StringAssert.Matches("(281)388-0388", @"(?d{3})?-? *d{3}-? *-?d{4}"); // Tests whether the specified string matches a regular expression
+
+StringAssert.DoesNotMatch("281)388-0388", @"(?d{3})?-? *d{3}-? *-?d{4}"); // Tests whether the specified string does not match a regular expression
+
+CollectionAssert.AreEqual(_expectedRockets, _actualRockets); // Tests whether the specified collections have the same elements in the same order and quantity.
+
+CollectionAssert.AreNotEqual(_expectedRockets, _actualRockets); // Tests whether the specified collections does not have the same elements or the elements are in a different order and quantity.
+
+CollectionAssert.AreEquivalent(_expectedRockets, _actualRockets); // Tests whether two collections contain the same elements.
+
+CollectionAssert.AreNotEquivalent(_expectedRockets, _actualRockets); // Tests whether two collections contain different elements.
+
+CollectionAssert.AllItemsAreInstancesOfType(_expectedRockets, _actualRockets); // Tests whether all elements in the specified collection are instances of the expected type
+
+CollectionAssert.AllItemsAreNotNull(_expectedRockets); // Tests whether all items in the specified collection are non-null
+
+CollectionAssert.AllItemsAreUnique(_expectedRockets); // Tests whether all items in the specified collection are unique
+
+CollectionAssert.Contains(_actualRockets, falcon9); // Tests whether the specified collection contains the specified element
+
+CollectionAssert.DoesNotContain(_actualRockets, falcon9); // Tests whether the specified collection does not contain the specified element
+
+CollectionAssert.IsSubsetOf(_expectedRockets, _actualRockets); // Tests whether one collection is a subset of another collection
+
+CollectionAssert.IsNotSubsetOf(_expectedRockets, _actualRockets); // Tests whether one collection is not a subset of another collection
+
+Assert.ThrowsException<ArgumentNullException>(() => new Regex(null)); // Tests whether the code specified by delegate throws exact given exception of type T
